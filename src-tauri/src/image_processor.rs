@@ -47,8 +47,9 @@ pub struct ImageWatermarkConfig {
 #[serde(tag = "type", content = "config")]
 pub enum ToolSettings {
     Convert {
-        format: String,  // "png" | "jpeg" | "webp" | "avif"
+        format: String,  // e.g. "png" | "jpeg" | "webp" | "avif" | "bmp" | "gif" | "tiff" | "ico"
         quality: u8,     // 0-100
+        background_fill: String, // "white" | "black"
     },
     CropRotate {
         rotation: String, // "0" | "90" | "180" | "270" | "auto"
@@ -131,11 +132,49 @@ fn save_image(img: &DynamicImage, output_path: &Path, format: &str, quality: u8)
             img.write_to(&mut writer, ImageFormat::Avif)
                 .map_err(|e| format!("Failed to write AVIF: {}", e))?;
         }
+        "bmp" => {
+            img.write_to(&mut writer, ImageFormat::Bmp)
+                .map_err(|e| format!("Failed to write BMP: {}", e))?;
+        }
+        "gif" => {
+            img.write_to(&mut writer, ImageFormat::Gif)
+                .map_err(|e| format!("Failed to write GIF: {}", e))?;
+        }
+        "ico" => {
+            img.write_to(&mut writer, ImageFormat::Ico)
+                .map_err(|e| format!("Failed to write ICO: {}", e))?;
+        }
+        "tiff" => {
+            img.write_to(&mut writer, ImageFormat::Tiff)
+                .map_err(|e| format!("Failed to write TIFF: {}", e))?;
+        }
         _ => {
             img.save(output_path).map_err(|e| format!("Failed to save: {}", e))?;
         }
     }
     Ok(())
+}
+
+/// Flattens the image alpha channel (transparency) onto a solid white or black background.
+fn flatten_image_background(img: &DynamicImage, fill_color: &str) -> DynamicImage {
+    if !img.color().has_alpha() {
+        return img.clone();
+    }
+    
+    let w = img.width();
+    let h = img.height();
+    
+    let bg_pixel = match fill_color.to_lowercase().as_str() {
+        "black" => image::Rgba([0, 0, 0, 255]),
+        _ => image::Rgba([255, 255, 255, 255]), // default white
+    };
+    
+    let mut bg_image = image::ImageBuffer::from_pixel(w, h, bg_pixel);
+    let rgba_img = img.to_rgba8();
+    
+    image::imageops::overlay(&mut bg_image, &rgba_img, 0, 0);
+    
+    DynamicImage::ImageRgba8(bg_image)
 }
 
 /// Helper to parse Hex color into Rgba.
@@ -405,12 +444,19 @@ pub fn process_single_file(
         .map_err(|e| format!("Failed to open image: {}", e))?;
     
     match settings {
-        ToolSettings::Convert { format, quality } => {
+        ToolSettings::Convert { format, quality, background_fill } => {
             let extension = format.trim_start_matches('.').to_lowercase();
             let output_path = get_unique_output_path(output_dir, &base_name, "_converted", &extension, reserved_paths);
             let final_filename = output_path.file_name().unwrap().to_string_lossy().to_string();
             
-            save_image(&img, &output_path, &extension, *quality)?;
+            // Flatten background if transparency exists
+            let processed_img = if img.color().has_alpha() {
+                flatten_image_background(&img, background_fill)
+            } else {
+                img.clone()
+            };
+            
+            save_image(&processed_img, &output_path, &extension, *quality)?;
             Ok(format!("Saved as {}", final_filename))
         }
         ToolSettings::CropRotate { rotation, crop } => {

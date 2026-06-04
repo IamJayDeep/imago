@@ -10,8 +10,9 @@ export interface FileItem {
 }
 
 export interface ConvertSettings {
-  format: "png" | "jpeg" | "webp" | "avif";
+  format: string; // supports png, jpeg, webp, avif, bmp, gif, tiff, ico
   quality: number;
+  backgroundFill: "white" | "black";
 }
 
 export interface CropRotateSettings {
@@ -111,6 +112,7 @@ export const useAppStore = create<AppState>((set) => ({
   convertSettings: {
     format: "jpeg",
     quality: 85,
+    backgroundFill: "white",
   },
   cropRotateSettings: {
     rotation: "0",

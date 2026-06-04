@@ -26,6 +26,17 @@ import { useAppStore } from "./store/useAppStore";
 import previewImg from "./assets/preview.png";
 import "./App.css";
 
+const AVAILABLE_FORMATS = [
+  { value: "jpeg", label: "JPEG (Joint Photographic Group)" },
+  { value: "png", label: "PNG (Portable Network Graphics)" },
+  { value: "webp", label: "WebP (Google Web Picture)" },
+  { value: "avif", label: "AVIF (AV1 Image File Format)" },
+  { value: "bmp", label: "BMP (Windows Bitmap)" },
+  { value: "gif", label: "GIF (Graphics Interchange Format)" },
+  { value: "tiff", label: "TIFF (Tagged Image File Format)" },
+  { value: "ico", label: "ICO (Windows Icon Format)" },
+];
+
 function App() {
   const {
     files,
@@ -55,6 +66,21 @@ function App() {
   const [dragActive, setDragActive] = useState(false);
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Searchable dropdown states for Convert formats
+  const [formatDropdownOpen, setFormatDropdownOpen] = useState(false);
+  const [formatSearch, setFormatSearch] = useState("");
+  const formatDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (formatDropdownRef.current && !formatDropdownRef.current.contains(event.target as Node)) {
+        setFormatDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // States for calculating Crop Bounding Box preview scale
   const cropImgRef = useRef<HTMLImageElement>(null);
@@ -254,6 +280,7 @@ function App() {
         config: {
           format: convertSettings.format,
           quality: convertSettings.quality,
+          background_fill: convertSettings.backgroundFill,
         },
       };
     } else if (activeTab === "crop-rotate") {
@@ -573,45 +600,139 @@ function App() {
             </h3>
             
             <div className="text-zinc-400 text-xs">
-              {activeTab === "convert" && (
-                <div className="space-y-5">
-                  <div className="flex flex-col gap-2">
-                    <label className="text-xs text-zinc-500 uppercase tracking-wider">Format</label>
-                    <div className="relative">
-                      <select
-                        value={convertSettings.format}
-                        onChange={(e) => setConvertSettings({ format: e.target.value as any })}
-                        disabled={isProcessing}
-                        className="appearance-none bg-zinc-900 border border-zinc-800 rounded pl-3 pr-10 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-700 w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <option value="jpeg">JPEG</option>
-                        <option value="png">PNG</option>
-                        <option value="webp">WebP (Lossless)</option>
-                        <option value="avif">AVIF</option>
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 w-4 h-4 pointer-events-none" />
-                    </div>
-                  </div>
-                  
-                  {convertSettings.format === "jpeg" && (
+              {activeTab === "convert" && (() => {
+                const hasPngInQueue = files.some(f => f.name.toLowerCase().endsWith(".png"));
+                const filteredFormats = AVAILABLE_FORMATS.filter(f =>
+                  f.label.toLowerCase().includes(formatSearch.toLowerCase()) ||
+                  f.value.toLowerCase().includes(formatSearch.toLowerCase())
+                );
+                const currentFormatLabel = AVAILABLE_FORMATS.find(f => f.value === convertSettings.format)?.label || convertSettings.format.toUpperCase();
+
+                return (
+                  <div className="space-y-5 animate-in fade-in duration-150">
                     <div className="flex flex-col gap-2">
-                      <div className="flex justify-between items-center">
-                        <label className="text-xs text-zinc-500 uppercase tracking-wider">Quality</label>
-                        <span className="text-xs font-mono text-zinc-400">{convertSettings.quality}%</span>
+                      <label className="text-xs text-zinc-500 uppercase tracking-wider">Format</label>
+                      <div className="relative" ref={formatDropdownRef}>
+                        <button
+                          type="button"
+                          disabled={isProcessing}
+                          onClick={() => setFormatDropdownOpen(!formatDropdownOpen)}
+                          className="w-full flex items-center justify-between bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-700 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <span className="truncate">{currentFormatLabel}</span>
+                          <ChevronDown size={16} className="text-zinc-500 flex-shrink-0" />
+                        </button>
+                        
+                        {formatDropdownOpen && (
+                          <div className="absolute left-0 right-0 mt-1.5 bg-zinc-900 border border-zinc-800 rounded shadow-xl z-50 p-2 space-y-2 animate-in fade-in slide-in-from-top-1 duration-150">
+                            <div className="relative">
+                              <input
+                                type="text"
+                                placeholder="Search formats..."
+                                value={formatSearch}
+                                onChange={(e) => setFormatSearch(e.target.value)}
+                                className="w-full bg-zinc-950 border border-zinc-800 rounded px-3 py-1.5 text-xs text-zinc-200 outline-none focus:border-zinc-700"
+                                autoFocus
+                              />
+                              {formatSearch && (
+                                <button
+                                  type="button"
+                                  onClick={() => setFormatSearch("")}
+                                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+                                >
+                                  <X size={12} />
+                                </button>
+                              )}
+                            </div>
+                            
+                            <div className="max-h-48 overflow-y-auto space-y-0.5 scrollbar">
+                              {filteredFormats.length > 0 ? (
+                                filteredFormats.map((f) => (
+                                  <button
+                                    key={f.value}
+                                    type="button"
+                                    onClick={() => {
+                                      setConvertSettings({ format: f.value });
+                                      setFormatDropdownOpen(false);
+                                      setFormatSearch("");
+                                    }}
+                                    className={`w-full text-left px-2.5 py-1.5 text-xs rounded transition-all flex items-center justify-between ${
+                                      convertSettings.format === f.value
+                                        ? "bg-zinc-800 text-zinc-50 font-medium"
+                                        : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40"
+                                    }`}
+                                  >
+                                    <span className="truncate">{f.label}</span>
+                                    {convertSettings.format === f.value && (
+                                      <span className="w-1.5 h-1.5 rounded-full bg-zinc-100 flex-shrink-0 ml-2"></span>
+                                    )}
+                                  </button>
+                                ))
+                              ) : (
+                                <div className="text-[10px] text-zinc-500 text-center py-3">
+                                  No formats found
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      <input
-                        type="range"
-                        min="1"
-                        max="100"
-                        value={convertSettings.quality}
-                        onChange={(e) => setConvertSettings({ quality: parseInt(e.target.value) })}
-                        disabled={isProcessing}
-                        className="w-full accent-zinc-200 h-1 bg-zinc-900 rounded-lg appearance-none cursor-pointer"
-                      />
                     </div>
-                  )}
-                </div>
-              )}
+                    
+                    {hasPngInQueue && (
+                      <div className="flex flex-col gap-2 border-t border-zinc-900 pt-4 animate-in fade-in duration-200">
+                        <label className="text-xs text-zinc-500 uppercase tracking-wider">
+                          PNG Background Color
+                        </label>
+                        <div className="grid grid-cols-2 gap-2 bg-zinc-900 p-1 rounded border border-zinc-900">
+                          <button
+                            onClick={() => setConvertSettings({ backgroundFill: "white" })}
+                            disabled={isProcessing}
+                            className={`px-3 py-1.5 text-[11px] rounded transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                              convertSettings.backgroundFill === "white"
+                                ? "bg-zinc-800 text-zinc-100 font-medium"
+                                : "text-zinc-400 hover:text-zinc-200"
+                            }`}
+                          >
+                            <span className="w-2.5 h-2.5 rounded-full bg-white border border-zinc-700"></span>
+                            <span>White</span>
+                          </button>
+                          <button
+                            onClick={() => setConvertSettings({ backgroundFill: "black" })}
+                            disabled={isProcessing}
+                            className={`px-3 py-1.5 text-[11px] rounded transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                              convertSettings.backgroundFill === "black"
+                                ? "bg-zinc-800 text-zinc-100 font-medium"
+                                : "text-zinc-400 hover:text-zinc-200"
+                            }`}
+                          >
+                            <span className="w-2.5 h-2.5 rounded-full bg-black border border-zinc-800"></span>
+                            <span>Black</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {(convertSettings.format === "jpeg" || convertSettings.format === "jpg") && (
+                      <div className="flex flex-col gap-2">
+                        <div className="flex justify-between items-center">
+                          <label className="text-xs text-zinc-500 uppercase tracking-wider">Quality</label>
+                          <span className="text-xs font-mono text-zinc-400">{convertSettings.quality}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="1"
+                          max="100"
+                          value={convertSettings.quality}
+                          onChange={(e) => setConvertSettings({ quality: parseInt(e.target.value) })}
+                          disabled={isProcessing}
+                          className="w-full accent-zinc-200 h-1 bg-zinc-900 rounded-lg appearance-none cursor-pointer"
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
               
               {activeTab === "resize" && (
                 <div className="space-y-5">
