@@ -13,12 +13,18 @@
     "windows": [
       {
         "title": "imago",
-        "width": 800,
-        "height": 600
+        "width": 1200,
+        "height": 800,
+        "minWidth": 1000,
+        "minHeight": 700
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self' ipc: http://ipc.localhost; img-src 'self' asset: http://asset.localhost data:; media-src 'self' asset: http://asset.localhost",
+      "assetProtocol": {
+        "enable": true,
+        "scope": ["**"]
+      }
     }
   },
   "bundle": {
@@ -30,6 +36,17 @@
       "icons/128x128@2x.png",
       "icons/icon.icns",
       "icons/icon.ico"
+    ],
+    "resources": [
+      "resources/*"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW51c2VkX3B1YmxpY19rZXlfdGVzdF9zdHJpbmc9PT09",
+      "endpoints": [
+        "https://releases.example.com/{{target}}/{{current_version}}"
+      ]
+    }
   }
 }
