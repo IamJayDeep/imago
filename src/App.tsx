@@ -19,6 +19,7 @@ import {
   AlertCircle,
   Loader2,
   X,
+  ChevronDown,
 } from "lucide-react";
 
 import { useAppStore } from "./store/useAppStore";
@@ -576,17 +577,20 @@ function App() {
                 <div className="space-y-5">
                   <div className="flex flex-col gap-2">
                     <label className="text-xs text-zinc-500 uppercase tracking-wider">Format</label>
-                    <select
-                      value={convertSettings.format}
-                      onChange={(e) => setConvertSettings({ format: e.target.value as any })}
-                      disabled={isProcessing}
-                      className="bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-700 w-full animate-duration-150"
-                    >
-                      <option value="jpeg">JPEG</option>
-                      <option value="png">PNG</option>
-                      <option value="webp">WebP (Lossless)</option>
-                      <option value="avif">AVIF</option>
-                    </select>
+                    <div className="relative">
+                      <select
+                        value={convertSettings.format}
+                        onChange={(e) => setConvertSettings({ format: e.target.value as any })}
+                        disabled={isProcessing}
+                        className="appearance-none bg-zinc-900 border border-zinc-800 rounded pl-3 pr-10 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-700 w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <option value="jpeg">JPEG</option>
+                        <option value="png">PNG</option>
+                        <option value="webp">WebP (Lossless)</option>
+                        <option value="avif">AVIF</option>
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 w-4 h-4 pointer-events-none" />
+                    </div>
                   </div>
                   
                   {convertSettings.format === "jpeg" && (
@@ -724,18 +728,21 @@ function App() {
 
                   <div className="flex flex-col gap-2 border-t border-zinc-900 pt-4">
                     <label className="text-xs text-zinc-500 uppercase tracking-wider">Rotation</label>
-                    <select
-                      value={cropRotateSettings.rotation}
-                      onChange={(e) => setCropRotateSettings({ rotation: e.target.value as any })}
-                      disabled={isProcessing}
-                      className="bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-700 w-full"
-                    >
-                      <option value="0">None (0°)</option>
-                      <option value="90">90° Clockwise</option>
-                      <option value="180">180° Rotate</option>
-                      <option value="270">270° Counter-Clockwise</option>
-                      <option value="auto">Auto-orient via EXIF</option>
-                    </select>
+                    <div className="relative">
+                      <select
+                        value={cropRotateSettings.rotation}
+                        onChange={(e) => setCropRotateSettings({ rotation: e.target.value as any })}
+                        disabled={isProcessing}
+                        className="appearance-none bg-zinc-900 border border-zinc-800 rounded pl-3 pr-10 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-700 w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <option value="0">None (0°)</option>
+                        <option value="90">90° Clockwise</option>
+                        <option value="180">180° Rotate</option>
+                        <option value="270">270° Counter-Clockwise</option>
+                        <option value="auto">Auto-orient via EXIF</option>
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 w-4 h-4 pointer-events-none" />
+                    </div>
                   </div>
 
                   <div className="flex flex-col gap-2 pt-2">
@@ -1012,25 +1019,28 @@ function App() {
 
                       <div className="flex flex-col gap-2">
                         <label className="text-xs text-zinc-500 uppercase tracking-wider">Position</label>
-                        <select
-                          value={watermarkSettings.textConfig.position}
-                          onChange={(e) =>
-                            setWatermarkSettings({
-                              textConfig: {
-                                ...watermarkSettings.textConfig,
-                                position: e.target.value as any,
-                              },
-                            })
-                          }
-                          disabled={isProcessing}
-                          className="bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-700 w-full"
-                        >
-                          <option value="top-left">Top Left</option>
-                          <option value="top-right">Top Right</option>
-                          <option value="bottom-left">Bottom Left</option>
-                          <option value="bottom-right">Bottom Right</option>
-                          <option value="center">Center</option>
-                        </select>
+                        <div className="relative">
+                          <select
+                            value={watermarkSettings.textConfig.position}
+                            onChange={(e) =>
+                              setWatermarkSettings({
+                                textConfig: {
+                                  ...watermarkSettings.textConfig,
+                                  position: e.target.value as any,
+                                },
+                              })
+                            }
+                            disabled={isProcessing}
+                            className="appearance-none bg-zinc-900 border border-zinc-800 rounded pl-3 pr-10 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-700 w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <option value="top-left">Top Left</option>
+                            <option value="top-right">Top Right</option>
+                            <option value="bottom-left">Bottom Left</option>
+                            <option value="bottom-right">Bottom Right</option>
+                            <option value="center">Center</option>
+                          </select>
+                          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 w-4 h-4 pointer-events-none" />
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -1120,25 +1130,28 @@ function App() {
 
                       <div className="flex flex-col gap-2">
                         <label className="text-xs text-zinc-500 uppercase tracking-wider">Position</label>
-                        <select
-                          value={watermarkSettings.imageConfig.position}
-                          onChange={(e) =>
-                            setWatermarkSettings({
-                              imageConfig: {
-                                ...watermarkSettings.imageConfig,
-                                position: e.target.value as any,
-                              },
-                            })
-                          }
-                          disabled={isProcessing}
-                          className="bg-zinc-900 border border-zinc-800 rounded px-3 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-700 w-full"
-                        >
-                          <option value="top-left">Top Left</option>
-                          <option value="top-right">Top Right</option>
-                          <option value="bottom-left">Bottom Left</option>
-                          <option value="bottom-right">Bottom Right</option>
-                          <option value="center">Center</option>
-                        </select>
+                        <div className="relative">
+                          <select
+                            value={watermarkSettings.imageConfig.position}
+                            onChange={(e) =>
+                              setWatermarkSettings({
+                                imageConfig: {
+                                  ...watermarkSettings.imageConfig,
+                                  position: e.target.value as any,
+                                },
+                              })
+                            }
+                            disabled={isProcessing}
+                            className="appearance-none bg-zinc-900 border border-zinc-800 rounded pl-3 pr-10 py-2 text-sm text-zinc-200 outline-none focus:border-zinc-700 w-full cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            <option value="top-left">Top Left</option>
+                            <option value="top-right">Top Right</option>
+                            <option value="bottom-left">Bottom Left</option>
+                            <option value="bottom-right">Bottom Right</option>
+                            <option value="center">Center</option>
+                          </select>
+                          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 w-4 h-4 pointer-events-none" />
+                        </div>
                       </div>
                     </div>
                   )}
