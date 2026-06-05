@@ -3,7 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { check } from "@tauri-apps/plugin-updater";
+// import { check } from "@tauri-apps/plugin-updater";
 
 import {
   Image as ImageIcon,
@@ -64,7 +64,8 @@ function App() {
   } = useAppStore();
 
   const [dragActive, setDragActive] = useState(false);
-  const [updateAvailable, setUpdateAvailable] = useState(false);
+  // const [updateAvailable, setUpdateAvailable] = useState(false);
+  const updateAvailable = false;
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Searchable dropdown states for Convert formats
