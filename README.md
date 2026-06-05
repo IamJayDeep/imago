@@ -1,4 +1,4 @@
-# IMAGO 🖼️
+# IMAGO <img src="app-icon.png" width="32" height="32" style="vertical-align: middle;" />
 > **A free, open-source, and fully offline batch image processing utility.**
 
 IMAGO is a premium desktop application built using the **Tauri v2** framework, combining a high-performance **Rust** engine on the backend with a sleek, responsive **React + TypeScript** frontend. 
