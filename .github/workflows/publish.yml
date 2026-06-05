@@ -1,9 +1,9 @@
-name: 'publish'
+name: "publish"
 
 on:
   push:
     tags:
-      - 'app-v*' # Triggers on tags like app-v0.1.0
+      - "app-v*" # Triggers on tags like app-v0.1.0
 
 jobs:
   release:
@@ -18,12 +18,12 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v5
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -41,9 +41,11 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         with:
           tagName: app-v__VERSION__
-          releaseName: 'Imago v__VERSION__'
-          releaseBody: 'Offline image processing utility build release.'
+          releaseName: "Imago v__VERSION__"
+          releaseBody: "Offline image processing utility build release."
           releaseDraft: true
           prerelease: false

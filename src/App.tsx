@@ -134,6 +134,7 @@ function App() {
   }, [activeTab, files]);
 
   // Check for updates on mount
+  /*
   useEffect(() => {
     const checkForUpdates = async () => {
       try {
@@ -147,6 +148,7 @@ function App() {
     };
     checkForUpdates();
   }, []);
+  */
 
   // Get default output directory on mount
   useEffect(() => {
@@ -174,7 +176,7 @@ function App() {
         message: string;
       }>("process-progress", (event) => {
         const { file_path, index, total, status, message } = event.payload;
-        
+
         updateFileProgress(file_path, status, message);
 
         if (index === total && (status === "success" || status === "error")) {
@@ -290,11 +292,11 @@ function App() {
           rotation: cropRotateSettings.rotation,
           crop: cropRotateSettings.cropEnabled
             ? {
-                x: cropRotateSettings.x,
-                y: cropRotateSettings.y,
-                width: cropRotateSettings.width,
-                height: cropRotateSettings.height,
-              }
+              x: cropRotateSettings.x,
+              y: cropRotateSettings.y,
+              width: cropRotateSettings.width,
+              height: cropRotateSettings.height,
+            }
             : null,
         },
       };
@@ -324,21 +326,21 @@ function App() {
           text_config:
             watermarkSettings.watermarkType === "text"
               ? {
-                  text: watermarkSettings.textConfig.text,
-                  font_size: watermarkSettings.textConfig.fontSize,
-                  color: watermarkSettings.textConfig.color,
-                  opacity: watermarkSettings.textConfig.opacity,
-                  position: watermarkSettings.textConfig.position,
-                }
+                text: watermarkSettings.textConfig.text,
+                font_size: watermarkSettings.textConfig.fontSize,
+                color: watermarkSettings.textConfig.color,
+                opacity: watermarkSettings.textConfig.opacity,
+                position: watermarkSettings.textConfig.position,
+              }
               : null,
           image_config:
             watermarkSettings.watermarkType === "image"
               ? {
-                  path: watermarkSettings.imageConfig.path,
-                  opacity: watermarkSettings.imageConfig.opacity,
-                  position: watermarkSettings.imageConfig.position,
-                  scale: watermarkSettings.imageConfig.scale,
-                }
+                path: watermarkSettings.imageConfig.path,
+                opacity: watermarkSettings.imageConfig.opacity,
+                position: watermarkSettings.imageConfig.position,
+                scale: watermarkSettings.imageConfig.scale,
+              }
               : null,
         },
       };
@@ -509,7 +511,7 @@ function App() {
     >
       {/* 3-Pane Layout Container */}
       <div className="flex w-full h-full">
-        
+
         {/* Pane 1: Left Sidebar (Tool Selection & Config) */}
         <div className="flex flex-col w-80 h-full border-r border-zinc-900 bg-zinc-950 flex-shrink-0">
           {/* Logo & Header */}
@@ -534,11 +536,10 @@ function App() {
             <button
               onClick={() => setActiveTab("convert")}
               disabled={isProcessing}
-              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all text-left ${
-                activeTab === "convert"
+              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all text-left ${activeTab === "convert"
                   ? "bg-zinc-900 text-zinc-100 font-medium"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50"
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             >
               <ImageIcon size={16} />
               <span>Convert Format</span>
@@ -546,11 +547,10 @@ function App() {
             <button
               onClick={() => setActiveTab("resize")}
               disabled={isProcessing}
-              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all text-left ${
-                activeTab === "resize"
+              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all text-left ${activeTab === "resize"
                   ? "bg-zinc-900 text-zinc-100 font-medium"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50"
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             >
               <ResizeIcon size={16} />
               <span>Resize Image</span>
@@ -558,11 +558,10 @@ function App() {
             <button
               onClick={() => setActiveTab("crop-rotate")}
               disabled={isProcessing}
-              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all text-left ${
-                activeTab === "crop-rotate"
+              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all text-left ${activeTab === "crop-rotate"
                   ? "bg-zinc-900 text-zinc-100 font-medium"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50"
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             >
               <CropIcon size={16} />
               <span>Crop & Rotate</span>
@@ -570,11 +569,10 @@ function App() {
             <button
               onClick={() => setActiveTab("metadata")}
               disabled={isProcessing}
-              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all text-left ${
-                activeTab === "metadata"
+              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all text-left ${activeTab === "metadata"
                   ? "bg-zinc-900 text-zinc-100 font-medium"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50"
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             >
               <ExifIcon size={16} />
               <span>EXIF Metadata</span>
@@ -582,11 +580,10 @@ function App() {
             <button
               onClick={() => setActiveTab("watermark")}
               disabled={isProcessing}
-              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all text-left ${
-                activeTab === "watermark"
+              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all text-left ${activeTab === "watermark"
                   ? "bg-zinc-900 text-zinc-100 font-medium"
                   : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50"
-              } disabled:opacity-50`}
+                } disabled:opacity-50`}
             >
               <WatermarkIcon size={16} />
               <span>Watermarking</span>
@@ -598,7 +595,7 @@ function App() {
             <h3 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-4">
               Settings
             </h3>
-            
+
             <div className="text-zinc-400 text-xs">
               {activeTab === "convert" && (() => {
                 const hasPngInQueue = files.some(f => f.name.toLowerCase().endsWith(".png"));
@@ -622,7 +619,7 @@ function App() {
                           <span className="truncate">{currentFormatLabel}</span>
                           <ChevronDown size={16} className="text-zinc-500 flex-shrink-0" />
                         </button>
-                        
+
                         {formatDropdownOpen && (
                           <div className="absolute left-0 right-0 mt-1.5 bg-zinc-900 border border-zinc-800 rounded shadow-xl z-50 p-2 space-y-2 animate-in fade-in slide-in-from-top-1 duration-150">
                             <div className="relative">
@@ -644,7 +641,7 @@ function App() {
                                 </button>
                               )}
                             </div>
-                            
+
                             <div className="max-h-48 overflow-y-auto space-y-0.5 scrollbar">
                               {filteredFormats.length > 0 ? (
                                 filteredFormats.map((f) => (
@@ -656,11 +653,10 @@ function App() {
                                       setFormatDropdownOpen(false);
                                       setFormatSearch("");
                                     }}
-                                    className={`w-full text-left px-2.5 py-1.5 text-xs rounded transition-all flex items-center justify-between ${
-                                      convertSettings.format === f.value
+                                    className={`w-full text-left px-2.5 py-1.5 text-xs rounded transition-all flex items-center justify-between ${convertSettings.format === f.value
                                         ? "bg-zinc-800 text-zinc-50 font-medium"
                                         : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40"
-                                    }`}
+                                      }`}
                                   >
                                     <span className="truncate">{f.label}</span>
                                     {convertSettings.format === f.value && (
@@ -678,7 +674,7 @@ function App() {
                         )}
                       </div>
                     </div>
-                    
+
                     {hasPngInQueue && (
                       <div className="flex flex-col gap-2 border-t border-zinc-900 pt-4 animate-in fade-in duration-200">
                         <label className="text-xs text-zinc-500 uppercase tracking-wider">
@@ -688,11 +684,10 @@ function App() {
                           <button
                             onClick={() => setConvertSettings({ backgroundFill: "white" })}
                             disabled={isProcessing}
-                            className={`px-3 py-1.5 text-[11px] rounded transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                              convertSettings.backgroundFill === "white"
+                            className={`px-3 py-1.5 text-[11px] rounded transition-all flex items-center justify-center gap-1.5 cursor-pointer ${convertSettings.backgroundFill === "white"
                                 ? "bg-zinc-800 text-zinc-100 font-medium"
                                 : "text-zinc-400 hover:text-zinc-200"
-                            }`}
+                              }`}
                           >
                             <span className="w-2.5 h-2.5 rounded-full bg-white border border-zinc-700"></span>
                             <span>White</span>
@@ -700,11 +695,10 @@ function App() {
                           <button
                             onClick={() => setConvertSettings({ backgroundFill: "black" })}
                             disabled={isProcessing}
-                            className={`px-3 py-1.5 text-[11px] rounded transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                              convertSettings.backgroundFill === "black"
+                            className={`px-3 py-1.5 text-[11px] rounded transition-all flex items-center justify-center gap-1.5 cursor-pointer ${convertSettings.backgroundFill === "black"
                                 ? "bg-zinc-800 text-zinc-100 font-medium"
                                 : "text-zinc-400 hover:text-zinc-200"
-                            }`}
+                              }`}
                           >
                             <span className="w-2.5 h-2.5 rounded-full bg-black border border-zinc-800"></span>
                             <span>Black</span>
@@ -712,7 +706,7 @@ function App() {
                         </div>
                       </div>
                     )}
-                    
+
                     {(convertSettings.format === "jpeg" || convertSettings.format === "jpg") && (
                       <div className="flex flex-col gap-2">
                         <div className="flex justify-between items-center">
@@ -733,7 +727,7 @@ function App() {
                   </div>
                 );
               })()}
-              
+
               {activeTab === "resize" && (
                 <div className="space-y-5">
                   <div className="flex flex-col gap-2">
@@ -819,7 +813,7 @@ function App() {
                   )}
                 </div>
               )}
-              
+
               {activeTab === "crop-rotate" && (
                 <div className="space-y-5">
                   {/* Interactive Crop Preview */}
@@ -933,7 +927,7 @@ function App() {
                   )}
                 </div>
               )}
-              
+
               {activeTab === "metadata" && (
                 <div className="space-y-5">
                   <div className="flex flex-col gap-2">
@@ -965,7 +959,7 @@ function App() {
                   </div>
                 </div>
               )}
-              
+
               {activeTab === "watermark" && (
                 <div className="space-y-5">
                   {/* Interactive Watermark Preview */}
@@ -977,17 +971,16 @@ function App() {
                         alt="Preview Scenery"
                         className="w-full h-full object-cover pointer-events-none"
                       />
-                      
+
                       {/* Text Overlay */}
                       {watermarkSettings.watermarkType === "text" && (
                         <div
-                          className={`absolute p-2 pointer-events-none ${
-                            watermarkSettings.textConfig.position === "top-left" ? "top-2 left-2" :
-                            watermarkSettings.textConfig.position === "top-right" ? "top-2 right-2 text-right" :
-                            watermarkSettings.textConfig.position === "bottom-left" ? "bottom-2 left-2" :
-                            watermarkSettings.textConfig.position === "bottom-right" ? "bottom-2 right-2 text-right" :
-                            "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center"
-                          }`}
+                          className={`absolute p-2 pointer-events-none ${watermarkSettings.textConfig.position === "top-left" ? "top-2 left-2" :
+                              watermarkSettings.textConfig.position === "top-right" ? "top-2 right-2 text-right" :
+                                watermarkSettings.textConfig.position === "bottom-left" ? "bottom-2 left-2" :
+                                  watermarkSettings.textConfig.position === "bottom-right" ? "bottom-2 right-2 text-right" :
+                                    "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center"
+                            }`}
                           style={{
                             color: watermarkSettings.textConfig.color,
                             opacity: watermarkSettings.textConfig.opacity,
@@ -1003,13 +996,12 @@ function App() {
                       {/* Image Overlay */}
                       {watermarkSettings.watermarkType === "image" && watermarkSettings.imageConfig.path && (
                         <div
-                          className={`absolute p-2 pointer-events-none flex ${
-                            watermarkSettings.imageConfig.position === "top-left" ? "top-2 left-2 items-start justify-start" :
-                            watermarkSettings.imageConfig.position === "top-right" ? "top-2 right-2 items-start justify-end" :
-                            watermarkSettings.imageConfig.position === "bottom-left" ? "bottom-2 left-2 items-end justify-start" :
-                            watermarkSettings.imageConfig.position === "bottom-right" ? "bottom-2 right-2 items-end justify-end" :
-                            "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
-                          }`}
+                          className={`absolute p-2 pointer-events-none flex ${watermarkSettings.imageConfig.position === "top-left" ? "top-2 left-2 items-start justify-start" :
+                              watermarkSettings.imageConfig.position === "top-right" ? "top-2 right-2 items-start justify-end" :
+                                watermarkSettings.imageConfig.position === "bottom-left" ? "bottom-2 left-2 items-end justify-start" :
+                                  watermarkSettings.imageConfig.position === "bottom-right" ? "bottom-2 right-2 items-end justify-end" :
+                                    "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 items-center justify-center"
+                            }`}
                           style={{
                             opacity: watermarkSettings.imageConfig.opacity,
                             width: `${watermarkSettings.imageConfig.scale * 100}%`,
@@ -1022,7 +1014,7 @@ function App() {
                           />
                         </div>
                       )}
-                      
+
                       {watermarkSettings.watermarkType === "image" && !watermarkSettings.imageConfig.path && (
                         <div className="absolute inset-0 flex items-center justify-center bg-zinc-950/40 text-[10px] text-zinc-500">
                           Select watermark image to preview
@@ -1037,22 +1029,20 @@ function App() {
                       <button
                         onClick={() => setWatermarkSettings({ watermarkType: "text" })}
                         disabled={isProcessing}
-                        className={`px-3 py-1.5 text-[11px] rounded transition-all ${
-                          watermarkSettings.watermarkType === "text"
+                        className={`px-3 py-1.5 text-[11px] rounded transition-all ${watermarkSettings.watermarkType === "text"
                             ? "bg-zinc-800 text-zinc-100 font-medium"
                             : "text-zinc-400 hover:text-zinc-200"
-                        }`}
+                          }`}
                       >
                         Text Overlay
                       </button>
                       <button
                         onClick={() => setWatermarkSettings({ watermarkType: "image" })}
                         disabled={isProcessing}
-                        className={`px-3 py-1.5 text-[11px] rounded transition-all ${
-                          watermarkSettings.watermarkType === "image"
+                        className={`px-3 py-1.5 text-[11px] rounded transition-all ${watermarkSettings.watermarkType === "image"
                             ? "bg-zinc-800 text-zinc-100 font-medium"
                             : "text-zinc-400 hover:text-zinc-200"
-                        }`}
+                          }`}
                       >
                         Image Overlay
                       </button>
@@ -1294,7 +1284,7 @@ function App() {
                 </span>
               )}
             </div>
-            
+
             <div className="flex items-center gap-4">
               {files.length > 0 && (
                 <button
@@ -1325,11 +1315,10 @@ function App() {
               // Empty State - Drag and Drop Zone
               <div
                 onClick={handleSelectFiles}
-                className={`flex flex-col items-center justify-center h-full w-full border border-dashed rounded-lg transition-all cursor-pointer ${
-                  dragActive
+                className={`flex flex-col items-center justify-center h-full w-full border border-dashed rounded-lg transition-all cursor-pointer ${dragActive
                     ? "border-zinc-500 bg-zinc-900/10"
                     : "border-zinc-800 hover:border-zinc-700 bg-zinc-950"
-                }`}
+                  }`}
               >
                 <input
                   type="file"
@@ -1392,7 +1381,7 @@ function App() {
                         <span className="text-[10px] text-zinc-600 truncate mt-0.5">
                           {file.path}
                         </span>
-                        
+
                         {/* Message status line */}
                         {file.message && !file.message.startsWith("EXIF_READ:") && (
                           <span className="text-[10px] text-zinc-500 truncate mt-1">
@@ -1501,7 +1490,7 @@ function App() {
               <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                 Summary Stats
               </span>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-zinc-900/20 border border-zinc-900 p-3 rounded">
                   <span className="text-[10px] text-zinc-500 block uppercase">
@@ -1567,11 +1556,10 @@ function App() {
             <button
               onClick={handleProcessBatch}
               disabled={files.length === 0 || isProcessing || !!validationError}
-              className={`w-full flex items-center justify-center gap-3 px-4 py-3 rounded text-sm font-medium tracking-wide transition-all ${
-                files.length === 0 || isProcessing || !!validationError
+              className={`w-full flex items-center justify-center gap-3 px-4 py-3 rounded text-sm font-medium tracking-wide transition-all ${files.length === 0 || isProcessing || !!validationError
                   ? "bg-zinc-900 text-zinc-600 border border-zinc-900 cursor-not-allowed"
                   : "bg-zinc-50 hover:bg-zinc-200 text-zinc-950 font-semibold cursor-pointer shadow-lg hover:shadow-xl"
-              }`}
+                }`}
             >
               {isProcessing ? (
                 <>
